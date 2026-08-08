@@ -1,3 +1,7 @@
+# miniproject3_web
+
+오늘의 하루 :: 할 일 관리 + 일기 + AI 공부 선배 웹 서비스. 자세한 기획은 [miniproject3.md](./miniproject3.md) 참고.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

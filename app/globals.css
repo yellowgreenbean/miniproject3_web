@@ -1,0 +1,138 @@
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html {
+  height: 100%;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+.authPage {
+  max-width: 360px;
+  margin: 64px auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.authSubtitle {
+  color: #666;
+  margin-bottom: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .authSubtitle {
+    color: #aaa;
+  }
+}
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.authForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.authForm input {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.authForm button,
+.authPage form button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #171717;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .authForm button,
+  .authPage form button {
+    background: #ededed;
+    color: #171717;
+  }
+}
+
+.authError {
+  color: #c0392b;
+  font-size: 14px;
+}
+
+.authMessage {
+  color: #2e7d32;
+  font-size: 14px;
+}
+
+.authFooter {
+  font-size: 14px;
+  color: #666;
+}
+
+.authFooter a {
+  text-decoration: underline;
+}
+
+.homeLinks {
+  display: flex;
+  gap: 16px;
+}
+
+.homeLinks a {
+  text-decoration: underline;
+}

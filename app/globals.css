@@ -81,6 +81,37 @@ a {
   gap: 12px;
 }
 
+.landingPage {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.landingHero {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  min-height: 340px;
+  background: #dfe9f2;
+}
+
+.landingHeroImage {
+  object-position: center;
+}
+
+.landingHeroImage-cover {
+  object-fit: cover;
+}
+
+.landingContent {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .authSubtitle {
   color: #666;
   margin-bottom: 8px;
@@ -428,6 +459,54 @@ a {
   }
 }
 
+.diarySection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+}
+
+.diarySection h2 {
+  font-size: 15px;
+}
+
+.diaryForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.diaryForm textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.5;
+  resize: vertical;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.diaryForm button {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #171717;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .diaryForm button {
+    background: #ededed;
+    color: #171717;
+  }
+}
+
 .todoGrid {
   list-style: none;
   display: grid;
@@ -576,4 +655,157 @@ a {
 
 .navLinkActive {
   color: var(--color-accent);
+}
+
+.studyChat {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.studyChatThread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chatBubbleRow {
+  display: flex;
+}
+
+.chatBubbleRow-user {
+  justify-content: flex-end;
+}
+
+.chatBubbleRow-assistant {
+  justify-content: flex-start;
+}
+
+.chatBubble {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.chatBubble-user {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.chatBubble-assistant {
+  background: var(--color-card-bg-2);
+  color: var(--color-main-text);
+}
+
+.chatBubble-error {
+  background: var(--color-card-bg-3);
+  color: var(--color-main-text);
+}
+
+.planWarning {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.planList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.planDay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--background);
+}
+
+.planDayInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+
+.planDayDate {
+  font-weight: 700;
+}
+
+.planDayAmount {
+  color: var(--color-main-text);
+}
+
+.planDayMethod {
+  color: var(--color-muted-text);
+}
+
+.planAddButton {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--background);
+  color: var(--color-main-text);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.planAddButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.studyForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.studyForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.studyForm input {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.studyForm button {
+  align-self: flex-start;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #171717;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.studyForm button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media (prefers-color-scheme: dark) {
+  .studyForm button {
+    background: #ededed;
+    color: #171717;
+  }
 }

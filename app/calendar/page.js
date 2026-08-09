@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { addTodos, addFriend, removeFriend } from "@/app/actions";
+import { addTodos, addFriend, removeFriend, saveDiary } from "@/app/actions";
 import {
   todayISO,
   getMonthMatrix,
@@ -50,7 +50,7 @@ export default async function CalendarPage({ searchParams }) {
   const gridStart = days[0].iso;
   const gridEnd = days[days.length - 1].iso;
 
-  const [{ data: monthTodos }, { data: dayTodos, error }] = await Promise.all([
+  const [{ data: monthTodos }, { data: dayTodos, error }, { data: diaryRow }] = await Promise.all([
     supabase
       .from("todos")
       .select("date")
@@ -64,6 +64,12 @@ export default async function CalendarPage({ searchParams }) {
       .eq("date", selectedDate)
       .order("priority", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: true }),
+    supabase
+      .from("diaries")
+      .select("content")
+      .eq("user_id", viewingUserId)
+      .eq("date", selectedDate)
+      .maybeSingle(),
   ]);
 
   const datesWithTodos = new Set((monthTodos ?? []).map((t) => t.date));
@@ -188,6 +194,22 @@ export default async function CalendarPage({ searchParams }) {
         )}
 
         <TodoGrid key={`${viewingUserId}-${selectedDate}`} initialTodos={list} readOnly={!isOwnCalendar} />
+
+        {isOwnCalendar && (
+          <section className="diarySection">
+            <h2>{formatDisplayDate(selectedDate)} 일기</h2>
+            <form action={saveDiary} className="diaryForm" key={`${selectedDate}-${diaryRow?.content ?? ""}`}>
+              <input type="hidden" name="date" value={selectedDate} />
+              <textarea
+                name="content"
+                rows={5}
+                defaultValue={diaryRow?.content ?? ""}
+                placeholder="오늘 하루는 어땠나요?"
+              />
+              <button type="submit">저장</button>
+            </form>
+          </section>
+        )}
       </main>
 
       <BottomNav />

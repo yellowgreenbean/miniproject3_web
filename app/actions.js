@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { todayISO } from "@/lib/date";
+import { getStudyPlan } from "@/lib/gemini";
 
 export async function login(formData) {
   const supabase = await createClient();
@@ -151,5 +152,87 @@ export async function removeFriend(friendRowId) {
   if (!user) redirect("/login");
 
   await supabase.from("friends").delete().eq("id", friendRowId).eq("owner_id", user.id);
+  revalidatePath("/calendar");
+}
+
+export async function saveDiary(formData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const date = formData.get("date") || todayISO();
+  const content = (formData.get("content") || "").trim();
+
+  const { data: existing } = await supabase
+    .from("diaries")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("date", date)
+    .maybeSingle();
+
+  if (!content) {
+    if (existing) {
+      await supabase.from("diaries").delete().eq("id", existing.id);
+    }
+    revalidatePath("/calendar");
+    return;
+  }
+
+  if (existing) {
+    await supabase.from("diaries").update({ content }).eq("id", existing.id);
+  } else {
+    await supabase.from("diaries").insert({ user_id: user.id, date, content });
+  }
+
+  revalidatePath("/calendar");
+}
+
+export async function requestStudyPlan({ deadline, totalAmount, dailyAmount, dailyTime }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  if (!deadline || !totalAmount || !dailyAmount || !dailyTime) {
+    return { ok: false, error: "기한, 전체 분량, 하루 가능 분량, 하루 투자 가능 시간을 모두 입력해주세요." };
+  }
+
+  try {
+    const plan = await getStudyPlan({
+      today: todayISO(),
+      deadline,
+      totalAmount,
+      dailyAmount,
+      dailyTime,
+    });
+    return { ok: true, plan };
+  } catch {
+    return { ok: false, error: "잠시 후 다시 시도해주세요." };
+  }
+}
+
+export async function addStudyPlanTodo(date, content) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: existing } = await supabase
+    .from("todos")
+    .select("priority")
+    .eq("user_id", user.id)
+    .eq("date", date)
+    .order("priority", { ascending: false })
+    .limit(1);
+
+  const nextPriority = (existing?.[0]?.priority ?? 0) + 1;
+
+  await supabase.from("todos").insert({
+    user_id: user.id,
+    date,
+    content,
+    priority: nextPriority,
+    is_done: false,
+  });
+
+  revalidatePath("/");
   revalidatePath("/calendar");
 }

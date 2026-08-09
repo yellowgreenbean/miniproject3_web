@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { logout, addTodos } from "@/app/actions";
 import { todayISO, getWeekDates, formatDisplayDate } from "@/lib/date";
@@ -11,14 +12,25 @@ export default async function HomePage({ searchParams }) {
 
   if (!user) {
     return (
-      <main className="authPage">
-        <h1>오늘의 하루</h1>
-        <p className="authSubtitle">
-          할 일을 우선순위와 함께 관리하고, 하루를 일기로 기록하는 서비스입니다.
-        </p>
-        <div className="homeLinks">
-          <Link href="/login">로그인</Link>
-          <Link href="/signup">회원가입</Link>
+      <main className="landingPage">
+        <div className="landingHero">
+          <Image
+            src="/sheep.jpeg"
+            alt="풀밭 위를 뛰어오르는 양"
+            fill
+            priority
+            className="landingHeroImage landingHeroImage-cover"
+          />
+        </div>
+        <div className="landingContent">
+          <h1>오늘의 하루</h1>
+          <p className="authSubtitle">
+            할 일을 우선순위와 함께 관리하고, 하루를 일기로 기록하는 서비스입니다.
+          </p>
+          <div className="homeLinks">
+            <Link href="/login">로그인</Link>
+            <Link href="/signup">회원가입</Link>
+          </div>
         </div>
       </main>
     );

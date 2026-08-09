@@ -151,7 +151,7 @@ export default function StudyChat() {
 
         {formError && <p className="authError">{formError}</p>}
 
-        <button type="submit" disabled={isLoading}>
+        <button type="submit" className="pillButton" disabled={isLoading}>
           선배에게 물어보기
         </button>
       </form>

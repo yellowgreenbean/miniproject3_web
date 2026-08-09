@@ -11,6 +11,7 @@ import {
 } from "@/lib/date";
 import BottomNav from "@/app/components/BottomNav";
 import TodoGrid from "@/app/components/TodoGrid";
+import GrassHill from "@/app/components/GrassHill";
 
 const WEEKDAY_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -80,22 +81,20 @@ export default async function CalendarPage({ searchParams }) {
   const friendQuery = viewingFriend ? `&friend=${viewingFriend.id}` : "";
 
   return (
-    <div className="appShell">
-      <header className="mainHeader">
-        <div>
-          <p className="headerDate">
-            {isOwnCalendar ? "내 달력" : `${viewingFriend.email}님의 달력 (읽기 전용)`}
-          </p>
-          <h1>{getMonthLabel(selectedDate)}</h1>
-        </div>
+    <div className="appShell bandShell">
+      <header className="mainHeader bandHeader">
+        <p className="headerDate">
+          {isOwnCalendar ? "내 달력" : `${viewingFriend.email}님의 달력 (읽기 전용)`}
+        </p>
+        <h1 className="bandTitle">{getMonthLabel(selectedDate)}</h1>
         <div className="monthNav">
-          <Link href={`/calendar?date=${prevMonth}${friendQuery}`} className="ghostButton" aria-label="이전 달">
+          <Link href={`/calendar?date=${prevMonth}${friendQuery}`} aria-label="이전 달">
             ◀
           </Link>
-          <Link href={`/calendar?date=${today}${friendQuery}`} className="ghostButton">
+          <Link href={`/calendar?date=${today}${friendQuery}`}>
             오늘
           </Link>
-          <Link href={`/calendar?date=${nextMonth}${friendQuery}`} className="ghostButton" aria-label="다음 달">
+          <Link href={`/calendar?date=${nextMonth}${friendQuery}`} aria-label="다음 달">
             ▶
           </Link>
         </div>
@@ -179,13 +178,15 @@ export default async function CalendarPage({ searchParams }) {
             <input type="hidden" name="date" value={selectedDate} />
             <label>
               {formatDisplayDate(selectedDate)} 할 일 추가 (쉼표 또는 줄바꿈으로 구분)
-              <textarea
-                name="content"
-                rows={3}
-                placeholder="예) 수학 숙제 30분, 영어 단어 외우기, 운동"
-              />
+              <div className="fuzzyTextareaWrap">
+                <textarea
+                  name="content"
+                  rows={3}
+                  placeholder="예) 수학 숙제 30분, 영어 단어 외우기, 운동"
+                />
+              </div>
             </label>
-            <button type="submit">추가하기</button>
+            <button type="submit" className="pillButton">추가하기</button>
           </form>
         )}
 
@@ -193,23 +194,29 @@ export default async function CalendarPage({ searchParams }) {
           <p className="authError">할 일을 불러오지 못했습니다: {error.message}</p>
         )}
 
-        <TodoGrid key={`${viewingUserId}-${selectedDate}`} initialTodos={list} readOnly={!isOwnCalendar} />
+        <div className="emptyStateWrap">
+          <TodoGrid key={`${viewingUserId}-${selectedDate}`} initialTodos={list} readOnly={!isOwnCalendar} />
+        </div>
 
         {isOwnCalendar && (
           <section className="diarySection">
             <h2>{formatDisplayDate(selectedDate)} 일기</h2>
             <form action={saveDiary} className="diaryForm" key={`${selectedDate}-${diaryRow?.content ?? ""}`}>
               <input type="hidden" name="date" value={selectedDate} />
-              <textarea
-                name="content"
-                rows={5}
-                defaultValue={diaryRow?.content ?? ""}
-                placeholder="오늘 하루는 어땠나요?"
-              />
-              <button type="submit">저장</button>
+              <div className="fuzzyTextareaWrap">
+                <textarea
+                  name="content"
+                  rows={5}
+                  defaultValue={diaryRow?.content ?? ""}
+                  placeholder="오늘 하루는 어땠나요?"
+                />
+              </div>
+              <button type="submit" className="pillButton">저장</button>
             </form>
           </section>
         )}
+
+        <GrassHill />
       </main>
 
       <BottomNav />

@@ -5,8 +5,9 @@
   --color-main-text: #2b2b2b;
   --color-muted-text: #8a8a8a;
   --color-border: #e4e1d8;
-  --color-accent: #4caf6d;
-  --color-accent-contrast: #ffffff;
+  --color-accent: #5f8d4e;
+  --color-accent-deep: #4a7038;
+  --color-accent-contrast: #fdfff8;
 
   --color-card-bg-0: #fdecc8;
   --color-card-bg-1: #e3f2e1;
@@ -14,13 +15,13 @@
   --color-card-bg-3: #fde2e2;
   --color-card-bg-4: #e1f0f7;
 
-  --color-sky-band: #cfe6ef;
-  --color-sand-bg: #f4eeda;
-  --color-sand-bg-strong: #f8f2e2;
-  --color-sand-border: #ddcfa8;
-  --color-hill-top: #bcdb92;
-  --color-hill-bottom: #8fbb66;
-  --color-logout: #e2857f;
+  --color-sky-band: #e2f1f8;
+  --color-sand-bg: #fffdf6;
+  --color-sand-bg-strong: #fffbef;
+  --color-fuzzy-edge: rgba(95, 141, 78, 0.4);
+  --color-hill-top: #d1e7b9;
+  --color-hill-bottom: #a3c986;
+  --color-logout: #e57373;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -31,7 +32,8 @@
     --color-main-text: #ededed;
     --color-muted-text: #9a9a9a;
     --color-border: #333333;
-    --color-accent: #5fcf87;
+    --color-accent: #82c26a;
+    --color-accent-deep: #9fd188;
     --color-accent-contrast: #0a0a0a;
 
     --color-card-bg-0: #3a341f;
@@ -43,10 +45,10 @@
     --color-sky-band: #1c3540;
     --color-sand-bg: #2b2718;
     --color-sand-bg-strong: #332e1e;
-    --color-sand-border: #4a4327;
+    --color-fuzzy-edge: rgba(130, 194, 106, 0.45);
     --color-hill-top: #33502a;
     --color-hill-bottom: #24391d;
-    --color-logout: #f0938d;
+    --color-logout: #f19a97;
   }
 }
 
@@ -66,7 +68,9 @@ body {
   flex-direction: column;
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", -apple-system,
+    BlinkMacSystemFont, Arial, Helvetica, sans-serif;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -668,7 +672,7 @@ a {
 }
 
 .navLinkActive {
-  color: var(--color-accent);
+  color: var(--color-accent-deep);
 }
 
 .studyChat {
@@ -763,11 +767,7 @@ a {
 
 .planAddButton {
   flex-shrink: 0;
-  padding: 6px 10px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--background);
-  color: var(--color-main-text);
+  padding: 6px 12px;
   font-size: 12px;
   cursor: pointer;
 }
@@ -793,42 +793,19 @@ a {
 }
 
 .studyForm input {
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 10px 12px;
   font-size: 14px;
-  background: var(--background);
-  color: var(--foreground);
+  color: var(--color-main-text);
 }
 
-.studyForm button {
-  align-self: flex-start;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  background: #171717;
-  color: #fff;
-  font-size: 14px;
-  cursor: pointer;
-}
+/* Shared "pastoral" theme — header/nav band, cream body, hand-drawn
+   fuzzy edges, pill controls. Used by all three screens. */
 
-.studyForm button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-@media (prefers-color-scheme: dark) {
-  .studyForm button {
-    background: #ededed;
-    color: #171717;
-  }
-}
-
-.todayShell {
+.bandShell {
   background: var(--color-sand-bg);
 }
 
-.todayHeader {
+.bandHeader {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -837,16 +814,22 @@ a {
   padding: 22px 20px 14px;
 }
 
-.todayHeader .headerDate {
+.bandHeader .headerDate {
   justify-self: start;
   margin-bottom: 0;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-accent-deep);
+  opacity: 0.85;
 }
 
-.todayTitle {
+.bandTitle {
   justify-self: center;
   font-size: 21px;
   font-weight: 800;
-  color: var(--color-accent);
+  letter-spacing: -0.01em;
+  color: var(--color-accent-deep);
+  text-align: center;
 }
 
 .logoutLink {
@@ -855,7 +838,23 @@ a {
   background: none;
   cursor: pointer;
   font-size: 13px;
+  font-weight: 700;
   color: var(--color-logout);
+}
+
+.bandHeader .monthNav {
+  justify-self: end;
+  display: flex;
+  gap: 4px;
+}
+
+.bandHeader .monthNav a {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--color-sand-bg-strong);
+  color: var(--color-accent-deep);
+  font-size: 12.5px;
+  font-weight: 700;
 }
 
 .todayWeekNav {
@@ -864,68 +863,228 @@ a {
 }
 
 .todayWeekNav .dayCircle {
+  position: relative;
   border: none;
-  border-radius: 16px;
-  background: var(--color-sand-bg-strong);
-  padding: 10px 0;
+  background: none;
+  min-height: 60px;
+  justify-content: center;
 }
 
-.todayWeekNav .dayCircleToday {
+.todayWeekNav .dayCircle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: var(--color-sand-bg);
+  filter: url(#handwobble);
+  z-index: 0;
+}
+
+.todayWeekNav .dayCircle .dayLabel,
+.todayWeekNav .dayCircle .dayNumber {
+  position: relative;
+  z-index: 1;
+}
+
+.todayWeekNav .dayCircleToday::before {
   box-shadow: inset 0 0 0 2px var(--color-accent);
 }
 
-.todayWeekNav .dayCircleSelected {
+.todayWeekNav .dayCircleSelected::before {
   background: var(--color-accent);
   box-shadow: none;
 }
 
-.todayContent {
+.bandContent {
   background: var(--color-sand-bg);
   padding: 20px 20px 0;
   gap: 16px;
 }
 
-.todayAddForm textarea {
-  border: 2px solid var(--color-sand-border);
-  border-radius: 16px;
-  background: var(--color-sand-bg-strong);
-  padding: 12px 14px;
+.fuzzyTextareaWrap {
+  position: relative;
 }
 
-.todayAddButton {
+.fuzzyTextareaWrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  background: var(--color-sand-bg-strong);
+  box-shadow: inset 0 0 0 2.5px var(--color-fuzzy-edge);
+  filter: url(#handwobble);
+  z-index: 0;
+}
+
+.fuzzyTextareaWrap:focus-within::before {
+  box-shadow: inset 0 0 0 2.5px var(--color-accent);
+}
+
+.fuzzyTextareaWrap textarea {
+  position: relative;
+  z-index: 1;
+  border: none;
+  background: transparent;
+  padding: 16px 18px;
+}
+
+.fuzzyTextareaWrap textarea:focus {
+  outline: none;
+}
+
+.pillButton {
   align-self: center;
   margin: 4px auto 0;
-  padding: 10px 32px;
+  padding: 12px 36px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 20px -8px rgba(74, 112, 56, 0.5);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.pillButton:hover {
+  transform: translateY(-1px);
+}
+
+.pillButton:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 4px 10px -6px rgba(74, 112, 56, 0.45);
+}
+
+.pillButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pillButton {
+    transition: none;
+  }
+}
+
+.emptyStateWrap {
+  flex: 1;
+}
+
+.emptyStateWrap .todoEmpty,
+.studyChatThread .todoEmpty {
+  text-align: center;
+  color: var(--color-accent-deep);
+  opacity: 0.85;
+  font-weight: 600;
+  font-size: 14.5px;
+  line-height: 1.7;
+  margin-top: 24px;
+}
+
+.grassHill {
+  flex: 0 0 auto;
+  margin: auto -20px 0;
+  height: 96px;
+}
+
+.grassHill svg {
+  display: block;
+}
+
+/* ---- calendar screen (screen 2) -------------------------------- */
+
+.friendPill {
+  border-radius: 999px;
+  background: var(--color-sand-bg-strong);
+  border: none;
+  font-weight: 600;
+}
+
+.friendAddForm input {
+  border: none;
+  border-radius: 12px;
+  background: var(--color-sand-bg-strong);
+}
+
+.monthDay {
+  border-radius: 16px;
+}
+
+.monthDayToday:not(.monthDaySelected) {
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+
+.monthDaySelected {
+  border-radius: 16px;
+}
+
+.diarySection {
+  border-top: none;
+  padding-top: 0;
+}
+
+.diarySection h2 {
+  color: var(--color-accent-deep);
+  font-weight: 800;
+}
+
+/* ---- study chat screen (screen 3) ------------------------------ */
+
+.chatBubble-assistant {
+  background: var(--color-sand-bg-strong);
+}
+
+.chatBubble-error {
+  background: rgba(229, 115, 115, 0.16);
+  color: var(--color-logout);
+  font-weight: 600;
+}
+
+.planDay {
+  position: relative;
+  background: none;
+  padding: 10px 12px;
+}
+
+.planDay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: var(--color-sand-bg);
+  box-shadow: inset 0 0 0 2px var(--color-fuzzy-edge);
+  filter: url(#handwobble);
+  z-index: 0;
+}
+
+.planDay > * {
+  position: relative;
+  z-index: 1;
+}
+
+.planAddButton {
+  border: none;
   border-radius: 999px;
   background: var(--color-accent);
   color: var(--color-accent-contrast);
   font-weight: 700;
 }
 
-@media (prefers-color-scheme: dark) {
-  .todayAddButton {
-    background: var(--color-accent);
-    color: var(--color-accent-contrast);
-  }
+.studyForm {
+  border-top: none;
+  padding-top: 0;
 }
 
-.todayTodoWrap {
-  flex: 1;
+.studyForm input {
+  border: none;
+  border-radius: 14px;
+  background: var(--color-sand-bg-strong);
+  box-shadow: inset 0 0 0 1.5px var(--color-fuzzy-edge);
 }
 
-.todayTodoWrap .todoEmpty {
-  text-align: center;
-  color: var(--color-main-text);
-  font-size: 15px;
-  line-height: 1.6;
-  margin-top: 24px;
-}
-
-.grassHill {
-  margin: auto -20px 0;
-  height: 90px;
-}
-
-.grassHill svg {
-  display: block;
+.studyForm input:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 1.5px var(--color-accent);
 }

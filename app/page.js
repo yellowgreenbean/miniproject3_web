@@ -95,7 +95,7 @@ export default async function HomePage({ searchParams }) {
           <p className="authError">할 일을 불러오지 못했습니다: {error.message}</p>
         )}
 
-        <TodoGrid initialTodos={list} />
+        <TodoGrid key={selectedDate} initialTodos={list} />
       </main>
 
       <BottomNav />

@@ -107,3 +107,49 @@ export async function reorderTodos(orderedIds) {
   );
   revalidatePath("/");
 }
+
+export async function addFriend(formData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const email = (formData.get("email") || "").trim();
+
+  if (!email) {
+    redirect("/calendar?friendError=이메일을 입력해주세요.");
+  }
+
+  if (email.toLowerCase() === user.email.toLowerCase()) {
+    redirect(`/calendar?friendError=${encodeURIComponent("본인은 추가할 수 없습니다.")}`);
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id")
+    .ilike("email", email)
+    .maybeSingle();
+
+  if (!profile) {
+    redirect(`/calendar?friendError=${encodeURIComponent("가입된 이메일을 찾을 수 없습니다.")}`);
+  }
+
+  const { error } = await supabase
+    .from("friends")
+    .insert({ owner_id: user.id, friend_id: profile.id });
+
+  if (error && error.code !== "23505") {
+    redirect(`/calendar?friendError=${encodeURIComponent("친구 추가에 실패했습니다.")}`);
+  }
+
+  revalidatePath("/calendar");
+  redirect("/calendar");
+}
+
+export async function removeFriend(friendRowId) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  await supabase.from("friends").delete().eq("id", friendRowId).eq("owner_id", user.id);
+  revalidatePath("/calendar");
+}

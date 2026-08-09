@@ -4,12 +4,13 @@ import { useState, useTransition } from "react";
 import { toggleTodo, reorderTodos } from "@/app/actions";
 import TodoIcon from "@/app/components/TodoIcon";
 
-export default function TodoGrid({ initialTodos }) {
+export default function TodoGrid({ initialTodos, readOnly = false }) {
   const [items, setItems] = useState(initialTodos);
   const [dragId, setDragId] = useState(null);
   const [, startTransition] = useTransition();
 
   function handleToggle(id, isDone) {
+    if (readOnly) return;
     setItems((prev) => prev.map((t) => (t.id === id ? { ...t, is_done: isDone } : t)));
     startTransition(() => {
       toggleTodo(id, isDone);
@@ -17,6 +18,7 @@ export default function TodoGrid({ initialTodos }) {
   }
 
   function handleDrop(targetId) {
+    if (readOnly) return;
     if (dragId === null || dragId === targetId) {
       setDragId(null);
       return;
@@ -42,7 +44,7 @@ export default function TodoGrid({ initialTodos }) {
   }
 
   if (items.length === 0) {
-    return <p className="todoEmpty">아직 할 일이 없습니다. 위에서 추가해보세요.</p>;
+    return <p className="todoEmpty">아직 할 일이 없습니다.{!readOnly && " 위에서 추가해보세요."}</p>;
   }
 
   return (
@@ -53,16 +55,17 @@ export default function TodoGrid({ initialTodos }) {
           className={`todoCard todoCard-c${index % 5}${todo.is_done ? " todoCardDone" : ""}${
             dragId === todo.id ? " todoCardDragging" : ""
           }`}
-          draggable
-          onDragStart={() => setDragId(todo.id)}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={() => handleDrop(todo.id)}
-          onDragEnd={() => setDragId(null)}
+          draggable={!readOnly}
+          onDragStart={readOnly ? undefined : () => setDragId(todo.id)}
+          onDragOver={readOnly ? undefined : (e) => e.preventDefault()}
+          onDrop={readOnly ? undefined : () => handleDrop(todo.id)}
+          onDragEnd={readOnly ? undefined : () => setDragId(null)}
         >
           <button
             type="button"
             className="checkmarkPopup"
             aria-label="완료 표시"
+            disabled={readOnly}
             onClick={() => handleToggle(todo.id, !todo.is_done)}
           >
             {todo.is_done ? (
@@ -78,9 +81,11 @@ export default function TodoGrid({ initialTodos }) {
 
           <p className="todoText">{todo.content}</p>
 
-          <span className="dragHandle" aria-hidden="true">
-            ⠿
-          </span>
+          {!readOnly && (
+            <span className="dragHandle" aria-hidden="true">
+              ⠿
+            </span>
+          )}
         </li>
       ))}
     </ul>

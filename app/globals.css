@@ -183,6 +183,63 @@ a {
   font-size: 22px;
 }
 
+.friendPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px 12px;
+}
+
+.friendSwitcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.friendPill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  font-size: 12px;
+  color: var(--color-main-text);
+}
+
+.friendPillActive {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.friendAddForm {
+  display: flex;
+  gap: 6px;
+}
+
+.friendAddForm input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 13px;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.friendList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.friendList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--color-muted-text);
+}
+
 .headerDate {
   color: var(--color-muted-text);
   font-size: 13px;
@@ -235,6 +292,79 @@ a {
 .dayCircleSelected .dayLabel,
 .dayCircleSelected .dayNumber {
   color: var(--color-accent-contrast);
+}
+
+.monthNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.monthNavGrid {
+  padding: 4px 16px 12px;
+}
+
+.monthWeekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 6px;
+}
+
+.monthWeekdays span {
+  text-align: center;
+  font-size: 11px;
+  color: var(--color-muted-text);
+}
+
+.monthGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.monthDay {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 0 10px;
+  border-radius: 10px;
+  color: var(--color-main-text);
+}
+
+.monthDayNumber {
+  font-size: 13px;
+}
+
+.monthDayMuted {
+  color: var(--color-muted-text);
+  opacity: 0.5;
+}
+
+.monthDayToday .monthDayNumber {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.monthDaySelected {
+  background: var(--color-accent);
+}
+
+.monthDaySelected .monthDayNumber {
+  color: var(--color-accent-contrast);
+  font-weight: 700;
+}
+
+.monthDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.monthDaySelected .monthDot {
+  background: var(--color-accent-contrast);
 }
 
 .mainContent {
@@ -384,6 +514,14 @@ a {
 
 .todoCard {
   cursor: grab;
+}
+
+.todoCard[draggable="false"] {
+  cursor: default;
+}
+
+.checkmarkPopup:disabled {
+  cursor: default;
 }
 
 .todoCardDragging {

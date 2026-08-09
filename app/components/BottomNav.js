@@ -21,6 +21,11 @@ const NAV_ITEMS = [
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2">
         <rect x="4" y="5" width="16" height="15" rx="2" />
         <path d="M4 10h16M8 3v4M16 3v4" strokeLinecap="round" />
+        <path
+          d="M9 16l-1 -2.4M9 16v-2.5M9 16l1 -2.4M13 16l-1 -2.4M13 16v-2.5M13 16l1 -2.4M17 16l-1 -2.4M17 16v-2.5M17 16l1 -2.4"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+        />
       </svg>
     ),
   },
@@ -30,7 +35,14 @@ const NAV_ITEMS = [
     icon: (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M4 5h16v11H9l-4 4V5Z" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M8 10h8M8 13h5" strokeLinecap="round" />
+        <circle cx="14" cy="9.5" r="2.4" strokeWidth="1.5" />
+        <path
+          d="M12.1 8.4c-1 -1.2 -2.4 -0.2 -1.6 1M15.9 8.4c1 -1.2 2.4 -0.2 1.6 1"
+          strokeWidth="1.3"
+          strokeLinecap="round"
+        />
+        <circle cx="13.2" cy="9.3" r="0.35" fill="currentColor" stroke="none" />
+        <circle cx="14.8" cy="9.3" r="0.35" fill="currentColor" stroke="none" />
       </svg>
     ),
   },

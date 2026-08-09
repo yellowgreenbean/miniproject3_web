@@ -5,6 +5,7 @@ import { logout, addTodos } from "@/app/actions";
 import { todayISO, getWeekDates, formatDisplayDate } from "@/lib/date";
 import BottomNav from "@/app/components/BottomNav";
 import TodoGrid from "@/app/components/TodoGrid";
+import GrassHill from "@/app/components/GrassHill";
 
 export default async function HomePage({ searchParams }) {
   const supabase = await createClient();
@@ -52,20 +53,18 @@ export default async function HomePage({ searchParams }) {
   const list = todos ?? [];
 
   return (
-    <div className="appShell">
-      <header className="mainHeader">
-        <div>
-          <p className="headerDate">{formatDisplayDate(selectedDate)}</p>
-          <h1>오늘의 하루</h1>
-        </div>
+    <div className="appShell todayShell">
+      <header className="mainHeader todayHeader">
+        <p className="headerDate">{formatDisplayDate(selectedDate)}</p>
+        <h1 className="todayTitle">오늘의 하루</h1>
         <form action={logout}>
-          <button type="submit" className="ghostButton">
+          <button type="submit" className="logoutLink">
             로그아웃
           </button>
         </form>
       </header>
 
-      <nav className="calendarNav">
+      <nav className="calendarNav todayWeekNav">
         <ul className="calendarGrid">
           {week.map((day) => {
             const isToday = day.iso === today;
@@ -89,8 +88,8 @@ export default async function HomePage({ searchParams }) {
         </ul>
       </nav>
 
-      <main className="mainContent">
-        <form action={addTodos} className="todoForm">
+      <main className="mainContent todayContent">
+        <form action={addTodos} className="todoForm todayAddForm">
           <input type="hidden" name="date" value={selectedDate} />
           <label>
             {formatDisplayDate(selectedDate)} 할 일 추가 (쉼표 또는 줄바꿈으로 구분)
@@ -100,14 +99,18 @@ export default async function HomePage({ searchParams }) {
               placeholder="예) 수학 숙제 30분, 영어 단어 외우기, 운동"
             />
           </label>
-          <button type="submit">추가하기</button>
+          <button type="submit" className="todayAddButton">추가하기</button>
         </form>
 
         {error && (
           <p className="authError">할 일을 불러오지 못했습니다: {error.message}</p>
         )}
 
-        <TodoGrid key={selectedDate} initialTodos={list} />
+        <div className="todayTodoWrap">
+          <TodoGrid key={selectedDate} initialTodos={list} />
+        </div>
+
+        <GrassHill />
       </main>
 
       <BottomNav />

@@ -9,6 +9,15 @@ export default async function StudyChatPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  const { data: logRows } = await supabase
+    .from("study_chat_logs")
+    .select("role, content")
+    .eq("user_id", user.id)
+    .order("id", { ascending: false })
+    .limit(20);
+
+  const initialMessages = (logRows ?? []).slice().reverse();
+
   return (
     <div className="appShell bandShell">
       <header className="mainHeader bandHeader">
@@ -16,7 +25,7 @@ export default async function StudyChatPage() {
         <h1 className="bandTitle">공부 선배</h1>
       </header>
       <main className="mainContent bandContent">
-        <StudyChat />
+        <StudyChat initialMessages={initialMessages} />
         <GrassHill />
       </main>
       <BottomNav />

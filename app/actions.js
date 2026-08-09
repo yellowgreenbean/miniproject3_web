@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { todayISO } from "@/lib/date";
-import { getStudyPlan } from "@/lib/gemini";
 
 export async function login(formData) {
   const supabase = await createClient();
@@ -185,29 +184,6 @@ export async function saveDiary(formData) {
   }
 
   revalidatePath("/calendar");
-}
-
-export async function requestStudyPlan({ deadline, totalAmount, dailyAmount, dailyTime }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  if (!deadline || !totalAmount || !dailyAmount || !dailyTime) {
-    return { ok: false, error: "기한, 전체 분량, 하루 가능 분량, 하루 투자 가능 시간을 모두 입력해주세요." };
-  }
-
-  try {
-    const plan = await getStudyPlan({
-      today: todayISO(),
-      deadline,
-      totalAmount,
-      dailyAmount,
-      dailyTime,
-    });
-    return { ok: true, plan };
-  } catch {
-    return { ok: false, error: "잠시 후 다시 시도해주세요." };
-  }
 }
 
 export async function addStudyPlanTodo(date, content) {

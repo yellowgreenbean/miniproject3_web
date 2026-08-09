@@ -1,72 +1,80 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
-import { requestStudyPlan, addStudyPlanTodo } from "@/app/actions";
+import { useState, useTransition } from "react";
+import { addStudyPlanTodo } from "@/app/actions";
 import { formatDisplayDate } from "@/lib/date";
 
 let nextId = 1;
 
-export default function StudyChat() {
-  const [messages, setMessages] = useState([]);
-  const [formError, setFormError] = useState("");
+const OPENING_LINE = "안녕! 나는 너의 공부 선배야 :) 요즘 어떤 시험이나 목표를 준비하고 있어?";
+
+export default function StudyChat({ initialMessages = [] }) {
+  const [messages, setMessages] = useState(() =>
+    initialMessages.length === 0
+      ? [{ id: nextId++, role: "assistant", text: OPENING_LINE, days: null }]
+      : initialMessages.map((m) => ({ id: nextId++, role: m.role, text: m.content, days: null }))
+  );
+  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [, startTransition] = useTransition();
-  const formRef = useRef(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const deadline = (formData.get("deadline") || "").trim();
-    const totalAmount = (formData.get("totalAmount") || "").trim();
-    const dailyAmount = (formData.get("dailyAmount") || "").trim();
-    const dailyTime = (formData.get("dailyTime") || "").trim();
+    const text = input.trim();
+    if (!text || isLoading) return;
 
-    if (!deadline || !totalAmount || !dailyAmount || !dailyTime) {
-      setFormError("기한, 전체 분량, 하루 가능 분량, 하루 투자 가능 시간을 모두 입력해주세요.");
-      return;
-    }
-    setFormError("");
-
-    const userMessage = {
-      id: nextId++,
-      role: "user",
-      text: `기한 ${formatDisplayDate(deadline)} · 전체 ${totalAmount} · 하루 최대 ${dailyAmount} · 하루 ${dailyTime}`,
-    };
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...prev, { id: nextId++, role: "user", text, days: null }]);
+    setInput("");
     setIsLoading(true);
 
-    const result = await requestStudyPlan({ deadline, totalAmount, dailyAmount, dailyTime });
+    try {
+      const res = await fetch("/api/study-coach", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text }),
+      });
+      const data = await res.json().catch(() => null);
 
-    setIsLoading(false);
+      if (!res.ok) {
+        setMessages((prev) => [
+          ...prev,
+          { id: nextId++, role: "error", text: data?.error || "잠시 후 다시 시도해주세요.", days: null },
+        ]);
+        return;
+      }
 
-    if (!result.ok) {
-      setMessages((prev) => [...prev, { id: nextId++, role: "error", text: result.error }]);
-      return;
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: nextId++,
+          role: "assistant",
+          text: data.reply,
+          days: Array.isArray(data.planItems) ? data.planItems.map((d) => ({ ...d, added: false })) : null,
+        },
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { id: nextId++, role: "error", text: "잠시 후 다시 시도해주세요.", days: null },
+      ]);
+    } finally {
+      setIsLoading(false);
     }
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: nextId++,
-        role: "assistant",
-        feasible: result.plan.feasible,
-        warning: result.plan.warning,
-        days: result.plan.days.map((d) => ({ ...d, added: false })),
-      },
-    ]);
   }
 
   function handleAddTodo(messageId, dayIndex) {
     setMessages((prev) =>
       prev.map((m) => {
-        if (m.id !== messageId) return m;
+        if (m.id !== messageId || !m.days) return m;
         const days = m.days.map((d, i) => (i === dayIndex ? { ...d, added: true } : d));
         return { ...m, days };
       })
     );
 
     const message = messages.find((m) => m.id === messageId);
-    const day = message.days[dayIndex];
+    const day = message?.days?.[dayIndex];
+    if (!day) return;
+
     startTransition(() => {
       addStudyPlanTodo(day.date, `${day.amount}, ${day.method}`);
     });
@@ -75,12 +83,6 @@ export default function StudyChat() {
   return (
     <div className="studyChat">
       <div className="studyChatThread">
-        {messages.length === 0 && !isLoading && (
-          <p className="todoEmpty">
-            기한, 전체 분량, 하루 가능 분량, 하루 투자 가능 시간을 알려주시면 날짜별 공부 계획을 짜드릴게요.
-          </p>
-        )}
-
         {messages.map((m) => {
           if (m.role === "user") {
             return (
@@ -99,26 +101,28 @@ export default function StudyChat() {
           return (
             <div key={m.id} className="chatBubbleRow chatBubbleRow-assistant">
               <div className="chatBubble chatBubble-assistant">
-                {!m.feasible && m.warning && <p className="planWarning">{m.warning}</p>}
-                <ul className="planList">
-                  {m.days.map((day, i) => (
-                    <li key={`${day.date}-${i}`} className="planDay">
-                      <div className="planDayInfo">
-                        <span className="planDayDate">{formatDisplayDate(day.date)}</span>
-                        <span className="planDayAmount">{day.amount}</span>
-                        <span className="planDayMethod">{day.method}</span>
-                      </div>
-                      <button
-                        type="button"
-                        className="planAddButton"
-                        disabled={day.added}
-                        onClick={() => handleAddTodo(m.id, i)}
-                      >
-                        {day.added ? "추가됨" : "to-do 추가"}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                <p>{m.text}</p>
+                {m.days && m.days.length > 0 && (
+                  <ul className="planList">
+                    {m.days.map((day, i) => (
+                      <li key={`${day.date}-${i}`} className="planDay">
+                        <div className="planDayInfo">
+                          <span className="planDayDate">{formatDisplayDate(day.date)}</span>
+                          <span className="planDayAmount">{day.amount}</span>
+                          <span className="planDayMethod">{day.method}</span>
+                        </div>
+                        <button
+                          type="button"
+                          className="planAddButton"
+                          disabled={day.added}
+                          onClick={() => handleAddTodo(m.id, i)}
+                        >
+                          {day.added ? "추가됨" : "to-do 추가"}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           );
@@ -131,28 +135,16 @@ export default function StudyChat() {
         )}
       </div>
 
-      <form ref={formRef} onSubmit={handleSubmit} className="studyForm">
-        <label>
-          기한(마감일)
-          <input type="date" name="deadline" required />
-        </label>
-        <label>
-          전체 분량
-          <input type="text" name="totalAmount" placeholder="예) 문제집 200페이지" />
-        </label>
-        <label>
-          하루에 할 수 있는 분량
-          <input type="text" name="dailyAmount" placeholder="예) 하루 20페이지" />
-        </label>
-        <label>
-          하루 투자 가능한 시간
-          <input type="text" name="dailyTime" placeholder="예) 하루 2시간" />
-        </label>
-
-        {formError && <p className="authError">{formError}</p>}
-
-        <button type="submit" className="pillButton" disabled={isLoading}>
-          선배에게 물어보기
+      <form onSubmit={handleSubmit} className="studyChatInputRow">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="선배에게 메시지 보내기"
+          disabled={isLoading}
+        />
+        <button type="submit" className="pillButton" disabled={isLoading || !input.trim()}>
+          전송
         </button>
       </form>
     </div>

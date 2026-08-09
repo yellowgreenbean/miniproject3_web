@@ -515,38 +515,36 @@ a {
 }
 
 .todoCard {
+  --card-accent: var(--color-accent);
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 4px;
+  min-height: 150px;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--background);
+  border: 2.5px solid var(--color-main-text);
+  box-shadow: 6px 6px 0 var(--card-accent);
+  cursor: grab;
+}
+
+.todoCard[draggable="false"] {
+  cursor: default;
+}
+
+.todoIconBadge {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--card-accent);
+  color: #fff;
+  display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 128px;
-  padding: 14px;
-  border-radius: 16px;
-  background: var(--color-card-bg-0);
-  text-align: center;
-}
-
-.todoIcon {
-  color: var(--color-main-text);
-  margin-top: 6px;
-}
-
-.todoCard-c0 {
-  background: var(--color-card-bg-0);
-}
-.todoCard-c1 {
-  background: var(--color-card-bg-1);
-}
-.todoCard-c2 {
-  background: var(--color-card-bg-2);
-}
-.todoCard-c3 {
-  background: var(--color-card-bg-3);
-}
-.todoCard-c4 {
-  background: var(--color-card-bg-4);
+  justify-content: center;
+  margin-bottom: 6px;
 }
 
 .todoCardDone {
@@ -554,35 +552,42 @@ a {
 }
 
 .todoText {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 800;
   color: var(--color-main-text);
   word-break: break-word;
+  line-height: 1.25;
 }
 
 .todoCardDone .todoText {
   text-decoration: line-through;
 }
 
+.todoCategoryLabel {
+  font-size: 12px;
+  color: var(--color-muted-text);
+}
+
 .checkmarkPopup {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 22px;
-  height: 22px;
+  top: 12px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  border: none;
-  background: var(--color-accent);
-  color: var(--color-accent-contrast);
+  border: 2px solid var(--color-main-text);
+  background: var(--background);
+  color: var(--color-main-text);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 }
 
-.todoCard:not(.todoCardDone) .checkmarkPopup {
-  background: var(--background);
-  border: 2px solid var(--color-border);
+.todoCardDone .checkmarkPopup {
+  background: var(--card-accent);
+  border-color: var(--card-accent);
+  color: #fff;
 }
 
 .checkmarkEmpty {
@@ -591,21 +596,13 @@ a {
   height: 8px;
 }
 
-.todoCard {
-  cursor: grab;
-}
-
-.todoCard[draggable="false"] {
-  cursor: default;
-}
-
 .checkmarkPopup:disabled {
   cursor: default;
 }
 
 .todoCardDragging {
   opacity: 0.4;
-  border: 2px dashed var(--color-accent);
+  border-style: dashed;
 }
 
 .dragHandle {
@@ -613,6 +610,7 @@ a {
   color: var(--color-muted-text);
   font-size: 14px;
   letter-spacing: 1px;
+  margin-top: auto;
 }
 
 .ghostButton {

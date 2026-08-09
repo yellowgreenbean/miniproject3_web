@@ -57,6 +57,18 @@ const CATEGORY_KEYWORDS = [
   ["shopping", ["쇼핑", "장보기", "구매"]],
 ];
 
+const CATEGORY_META = {
+  exercise: { color: "#4caf6d", label: "운동" },
+  study: { color: "#4c7dff", label: "공부" },
+  meal: { color: "#ff9f43", label: "식사" },
+  sleep: { color: "#9b7ede", label: "수면" },
+  water: { color: "#3fc1d6", label: "수분" },
+  clean: { color: "#ff6f91", label: "청소" },
+  work: { color: "#6c7a89", label: "업무" },
+  shopping: { color: "#ffc93c", label: "쇼핑" },
+  default: { color: "#ff5c5c", label: "할 일" },
+};
+
 export function matchTodoIcon(content) {
   const text = content || "";
   for (const [key, keywords] of CATEGORY_KEYWORDS) {
@@ -65,16 +77,21 @@ export function matchTodoIcon(content) {
   return "default";
 }
 
+export function getCategoryMeta(content) {
+  const key = matchTodoIcon(content);
+  return { key, ...CATEGORY_META[key] };
+}
+
 export default function TodoIcon({ content, className }) {
   const key = matchTodoIcon(content);
   return (
     <svg
       viewBox="0 0 24 24"
-      width="32"
-      height="32"
+      width="22"
+      height="22"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}

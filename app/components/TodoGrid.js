@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { toggleTodo, reorderTodos } from "@/app/actions";
-import TodoIcon from "@/app/components/TodoIcon";
+import TodoIcon, { getCategoryMeta } from "@/app/components/TodoIcon";
 
 export default function TodoGrid({ initialTodos, readOnly = false }) {
   const [items, setItems] = useState(initialTodos);
@@ -49,45 +49,52 @@ export default function TodoGrid({ initialTodos, readOnly = false }) {
 
   return (
     <ul className="todoGrid">
-      {items.map((todo, index) => (
-        <li
-          key={todo.id}
-          className={`todoCard todoCard-c${index % 5}${todo.is_done ? " todoCardDone" : ""}${
-            dragId === todo.id ? " todoCardDragging" : ""
-          }`}
-          draggable={!readOnly}
-          onDragStart={readOnly ? undefined : () => setDragId(todo.id)}
-          onDragOver={readOnly ? undefined : (e) => e.preventDefault()}
-          onDrop={readOnly ? undefined : () => handleDrop(todo.id)}
-          onDragEnd={readOnly ? undefined : () => setDragId(null)}
-        >
-          <button
-            type="button"
-            className="checkmarkPopup"
-            aria-label="완료 표시"
-            disabled={readOnly}
-            onClick={() => handleToggle(todo.id, !todo.is_done)}
+      {items.map((todo) => {
+        const meta = getCategoryMeta(todo.content);
+        return (
+          <li
+            key={todo.id}
+            className={`todoCard${todo.is_done ? " todoCardDone" : ""}${
+              dragId === todo.id ? " todoCardDragging" : ""
+            }`}
+            style={{ "--card-accent": meta.color }}
+            draggable={!readOnly}
+            onDragStart={readOnly ? undefined : () => setDragId(todo.id)}
+            onDragOver={readOnly ? undefined : (e) => e.preventDefault()}
+            onDrop={readOnly ? undefined : () => handleDrop(todo.id)}
+            onDragEnd={readOnly ? undefined : () => setDragId(null)}
           >
-            {todo.is_done ? (
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3">
-                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            ) : (
-              <span className="checkmarkEmpty" />
+            <button
+              type="button"
+              className="checkmarkPopup"
+              aria-label="완료 표시"
+              disabled={readOnly}
+              onClick={() => handleToggle(todo.id, !todo.is_done)}
+            >
+              {todo.is_done ? (
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3">
+                  <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <span className="checkmarkEmpty" />
+              )}
+            </button>
+
+            <div className="todoIconBadge">
+              <TodoIcon content={todo.content} />
+            </div>
+
+            <p className="todoText">{todo.content}</p>
+            <p className="todoCategoryLabel">{meta.label}</p>
+
+            {!readOnly && (
+              <span className="dragHandle" aria-hidden="true">
+                ⠿
+              </span>
             )}
-          </button>
-
-          <TodoIcon content={todo.content} className="todoIcon" />
-
-          <p className="todoText">{todo.content}</p>
-
-          {!readOnly && (
-            <span className="dragHandle" aria-hidden="true">
-              ⠿
-            </span>
-          )}
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ul>
   );
 }

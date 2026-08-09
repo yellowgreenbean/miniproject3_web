@@ -1,12 +1,36 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --color-main-text: #2b2b2b;
+  --color-muted-text: #8a8a8a;
+  --color-border: #e4e1d8;
+  --color-accent: #4caf6d;
+  --color-accent-contrast: #ffffff;
+
+  --color-card-bg-0: #fdecc8;
+  --color-card-bg-1: #e3f2e1;
+  --color-card-bg-2: #e8e6f7;
+  --color-card-bg-3: #fde2e2;
+  --color-card-bg-4: #e1f0f7;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+
+    --color-main-text: #ededed;
+    --color-muted-text: #9a9a9a;
+    --color-border: #333333;
+    --color-accent: #5fcf87;
+    --color-accent-contrast: #0a0a0a;
+
+    --color-card-bg-0: #3a341f;
+    --color-card-bg-1: #1f3327;
+    --color-card-bg-2: #29273a;
+    --color-card-bg-3: #3a2626;
+    --color-card-bg-4: #1f303a;
   }
 }
 
@@ -135,4 +159,283 @@ a {
 
 .homeLinks a {
   text-decoration: underline;
+}
+
+.appShell {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+  color: var(--color-main-text);
+}
+
+.mainHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 24px 20px 12px;
+}
+
+.mainHeader h1 {
+  font-size: 22px;
+}
+
+.headerDate {
+  color: var(--color-muted-text);
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.calendarNav {
+  padding: 4px 16px 12px;
+}
+
+.calendarGrid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.dayCircle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 0;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: var(--background);
+  color: var(--color-main-text);
+}
+
+.dayLabel {
+  font-size: 10px;
+  color: var(--color-muted-text);
+}
+
+.dayNumber {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dayCircleToday {
+  border-color: var(--color-accent);
+}
+
+.dayCircleSelected {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.dayCircleSelected .dayLabel,
+.dayCircleSelected .dayNumber {
+  color: var(--color-accent-contrast);
+}
+
+.mainContent {
+  flex: 1;
+  padding: 8px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.todoForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.todoForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.todoForm textarea {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.todoForm button {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #171717;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .todoForm button {
+    background: #ededed;
+    color: #171717;
+  }
+}
+
+.todoEmpty {
+  color: #666;
+  font-size: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .todoEmpty {
+    color: #aaa;
+  }
+}
+
+.todoGrid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.todoCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 128px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--color-card-bg-0);
+  text-align: center;
+}
+
+.todoIcon {
+  color: var(--color-main-text);
+  margin-top: 6px;
+}
+
+.todoCard-c0 {
+  background: var(--color-card-bg-0);
+}
+.todoCard-c1 {
+  background: var(--color-card-bg-1);
+}
+.todoCard-c2 {
+  background: var(--color-card-bg-2);
+}
+.todoCard-c3 {
+  background: var(--color-card-bg-3);
+}
+.todoCard-c4 {
+  background: var(--color-card-bg-4);
+}
+
+.todoCardDone {
+  opacity: 0.6;
+}
+
+.todoText {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-main-text);
+  word-break: break-word;
+}
+
+.todoCardDone .todoText {
+  text-decoration: line-through;
+}
+
+.checkmarkPopup {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.todoCard:not(.todoCardDone) .checkmarkPopup {
+  background: var(--background);
+  border: 2px solid var(--color-border);
+}
+
+.checkmarkEmpty {
+  display: block;
+  width: 8px;
+  height: 8px;
+}
+
+.todoCard {
+  cursor: grab;
+}
+
+.todoCardDragging {
+  opacity: 0.4;
+  border: 2px dashed var(--color-accent);
+}
+
+.dragHandle {
+  align-self: flex-end;
+  color: var(--color-muted-text);
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.ghostButton {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+  color: inherit;
+}
+
+.ghostButton:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.bottomNav {
+  position: sticky;
+  bottom: 0;
+  border-top: 1px solid var(--color-border);
+  background: var(--background);
+}
+
+.navLinks {
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0 14px;
+}
+
+.navLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--color-muted-text);
+  padding: 4px 16px;
+}
+
+.navLinkActive {
+  color: var(--color-accent);
 }

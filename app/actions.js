@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { todayISO } from "@/lib/date";
 
 export async function login(formData) {
   const supabase = await createClient();
@@ -43,4 +44,66 @@ export async function logout() {
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
   redirect("/login");
+}
+
+export async function addTodos(formData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const raw = formData.get("content") || "";
+  const items = raw
+    .split(/[,\n]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const date = formData.get("date") || todayISO();
+
+  if (items.length === 0) {
+    revalidatePath("/");
+    return;
+  }
+
+  const { data: existing } = await supabase
+    .from("todos")
+    .select("priority")
+    .eq("user_id", user.id)
+    .eq("date", date)
+    .order("priority", { ascending: false })
+    .limit(1);
+
+  let nextPriority = (existing?.[0]?.priority ?? 0) + 1;
+
+  const rows = items.map((content) => ({
+    user_id: user.id,
+    date,
+    content,
+    priority: nextPriority++,
+    is_done: false,
+  }));
+
+  await supabase.from("todos").insert(rows);
+  revalidatePath("/");
+}
+
+export async function toggleTodo(id, isDone) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  await supabase.from("todos").update({ is_done: isDone }).eq("id", id).eq("user_id", user.id);
+  revalidatePath("/");
+}
+
+export async function reorderTodos(orderedIds) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  await Promise.all(
+    orderedIds.map((id, index) =>
+      supabase.from("todos").update({ priority: index + 1 }).eq("id", id).eq("user_id", user.id)
+    )
+  );
+  revalidatePath("/");
 }

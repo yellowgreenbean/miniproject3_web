@@ -39,6 +39,9 @@ yarn-error.log*
 # python venv (unrelated to this project)
 .venv
 
+# design reference images (not ours to redistribute)
+/image
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

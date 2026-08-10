@@ -17,15 +17,18 @@ export default function TodoGrid({ initialTodos, readOnly = false }) {
     });
   }
 
-  function handleDrop(targetId) {
+  function handleDrop(targetId, sourceId) {
     if (readOnly) return;
-    if (dragId === null || dragId === targetId) {
+    // dragId is the normal path; sourceId is what the drag itself carried, which
+    // survives even if the dragstart state update never landed.
+    const from = dragId ?? sourceId;
+    if (from == null || String(from) === String(targetId)) {
       setDragId(null);
       return;
     }
 
-    const fromIndex = items.findIndex((t) => t.id === dragId);
-    const toIndex = items.findIndex((t) => t.id === targetId);
+    const fromIndex = items.findIndex((t) => String(t.id) === String(from));
+    const toIndex = items.findIndex((t) => String(t.id) === String(targetId));
     if (fromIndex === -1 || toIndex === -1) {
       setDragId(null);
       return;
@@ -59,9 +62,32 @@ export default function TodoGrid({ initialTodos, readOnly = false }) {
             }`}
             style={{ "--card-accent": meta.color }}
             draggable={!readOnly}
-            onDragStart={readOnly ? undefined : () => setDragId(todo.id)}
-            onDragOver={readOnly ? undefined : (e) => e.preventDefault()}
-            onDrop={readOnly ? undefined : () => handleDrop(todo.id)}
+            onDragStart={
+              readOnly
+                ? undefined
+                : (e) => {
+                    // Firefox will not begin a drag unless dataTransfer carries something.
+                    e.dataTransfer.setData("text/plain", String(todo.id));
+                    e.dataTransfer.effectAllowed = "move";
+                    setDragId(todo.id);
+                  }
+            }
+            onDragOver={
+              readOnly
+                ? undefined
+                : (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                  }
+            }
+            onDrop={
+              readOnly
+                ? undefined
+                : (e) => {
+                    e.preventDefault();
+                    handleDrop(todo.id, e.dataTransfer.getData("text/plain"));
+                  }
+            }
             onDragEnd={readOnly ? undefined : () => setDragId(null)}
           >
             <button

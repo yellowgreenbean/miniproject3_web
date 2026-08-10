@@ -921,6 +921,45 @@ h2,
   }
 }
 
+.studyChatInputRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.studyChatInputRow input {
+  /* min-width:0 lets the input shrink below its intrinsic width on narrow
+     screens instead of pushing the send button off the row. */
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-sand-bg-strong);
+  box-shadow: inset 0 0 0 1.5px var(--color-fuzzy-edge);
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-main-text);
+}
+
+.studyChatInputRow input:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 1.5px var(--color-accent);
+}
+
+.studyChatInputRow input:disabled {
+  opacity: 0.6;
+}
+
+/* .pillButton centres itself for the standalone "추가하기" button; inside this
+   row it has to sit beside the input instead. */
+.studyChatInputRow .pillButton {
+  flex: 0 0 auto;
+  align-self: auto;
+  margin: 0;
+  padding: 12px 22px;
+}
+
 .planWarning {
   font-size: 13px;
   font-weight: 600;
@@ -973,27 +1012,6 @@ h2,
 .planAddButton:disabled {
   opacity: 0.5;
   cursor: default;
-}
-
-.studyForm {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 12px;
-  border-top: 1px solid var(--color-border);
-}
-
-.studyForm label {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 13px;
-}
-
-.studyForm input {
-  padding: 10px 12px;
-  font-size: 14px;
-  color: var(--color-main-text);
 }
 
 /* Shared "pastoral" theme — header/nav band, cream body, hand-drawn
@@ -1267,19 +1285,3 @@ h2,
   font-weight: 700;
 }
 
-.studyForm {
-  border-top: none;
-  padding-top: 0;
-}
-
-.studyForm input {
-  border: none;
-  border-radius: 14px;
-  background: var(--color-sand-bg-strong);
-  box-shadow: inset 0 0 0 1.5px var(--color-fuzzy-edge);
-}
-
-.studyForm input:focus {
-  outline: none;
-  box-shadow: inset 0 0 0 1.5px var(--color-accent);
-}

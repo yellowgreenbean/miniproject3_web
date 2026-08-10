@@ -843,6 +843,9 @@ h2,
 [data-category="슬럼프"] {
   --topic-color: #ff9f43;
 }
+[data-category="우선순위"] {
+  --topic-color: #3fa66b;
+}
 
 .coachChoices {
   display: flex;
@@ -930,6 +933,213 @@ h2,
 @media (prefers-reduced-motion: reduce) {
   .coachChoiceChip,
   .coachTopicButton {
+    transition: none;
+  }
+}
+
+/* ---- chatbot options & overdue round-up ------------------------- */
+
+.coachModeRow {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--color-card-bg-2);
+}
+
+.coachModeButton {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--color-muted-text);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.coachModeButton[aria-selected="true"] {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.catchupRange {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--color-card-bg-1);
+}
+
+.catchupRangeChips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.catchupRangeLabel {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-accent-deep);
+}
+
+/* 칩은 .coachChoiceChip 과 같은 문법(테두리 pill -> 채워진 pill)을 쓰되,
+   카테고리 색이 없는 자리라 테마 accent 를 쓴다. */
+.catchupRangeChip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-accent);
+  background: var(--background);
+  color: var(--color-accent-deep);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.catchupRangeChip:hover,
+.catchupRangeChip:active,
+.catchupRangeChip[aria-pressed="true"] {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.catchupRangeChip:disabled,
+.catchupRangeCustom input:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* 기다리는 동안에도 고른 칩은 채워진 채로 남아야 하므로 눌린 칩은 되돌리지 않는다 */
+.catchupRangeChip:disabled:not([aria-pressed="true"]):hover {
+  background: var(--background);
+  color: var(--color-accent-deep);
+}
+
+.catchupRangeCustom {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12.5px;
+  color: var(--color-muted-text);
+}
+
+.catchupRangeCustom input {
+  width: 54px;
+  padding: 5px 8px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--background);
+  color: var(--color-main-text);
+  font: inherit;
+  font-size: 12.5px;
+  text-align: center;
+}
+
+.catchupRangeCustom input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.catchupRangeHint {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-muted-text);
+}
+
+.catchupRange .pillButton {
+  margin: 2px auto 0;
+  padding: 10px 28px;
+  font-size: 14px;
+}
+
+.overdueBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.overdueCount {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--color-card-bg-3);
+  color: var(--color-main-text);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.overdueList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* 밀린 게 수십 개일 수 있어 말풍선이 화면을 다 먹지 않게 잘라 준다 */
+  max-height: 168px;
+  overflow-y: auto;
+}
+
+.overdueItem {
+  display: flex;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.overdueDate {
+  flex: 0 0 auto;
+  color: var(--color-muted-text);
+}
+
+.overdueContent {
+  color: var(--color-main-text);
+  word-break: break-word;
+}
+
+/* 줄마다 있는 .planAddButton 은 꽉 찬 pill 이므로, 묶음 동작은 한 단계 약한
+   테두리 pill 로 둬서 같은 말투 안에서 위계만 다르게 한다. */
+.planAddAllButton {
+  width: 100%;
+  margin-top: 8px;
+  padding: 9px 12px;
+  border: 1.5px solid var(--color-accent);
+  border-radius: 999px;
+  background: none;
+  color: var(--color-accent-deep);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.planAddAllButton:hover,
+.planAddAllButton:active {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.planAddAllButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.planAddAllButton:disabled:hover {
+  background: none;
+  color: var(--color-accent-deep);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coachModeButton,
+  .catchupRangeChip,
+  .planAddAllButton {
     transition: none;
   }
 }
@@ -1394,5 +1604,62 @@ h2,
   background: var(--color-accent);
   color: var(--color-accent-contrast);
   font-weight: 700;
+}
+
+/* 모드 전환과 기간 상자도 다른 카드들과 같은 손그림 테두리를 두른다.
+   .planDay / .fuzzyTextareaWrap 과 같은 ::before + handwobble 방식. */
+.coachModeRow {
+  position: relative;
+  background: none;
+}
+
+.coachModeRow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--color-sand-bg-strong);
+  box-shadow: inset 0 0 0 2px var(--color-fuzzy-edge);
+  filter: url(#handwobble);
+  z-index: 0;
+}
+
+.coachModeRow > * {
+  position: relative;
+  z-index: 1;
+}
+
+.catchupRange {
+  position: relative;
+  background: none;
+  padding: 14px;
+}
+
+.catchupRange::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  background: var(--color-sand-bg-strong);
+  box-shadow: inset 0 0 0 2px var(--color-fuzzy-edge);
+  filter: url(#handwobble);
+  z-index: 0;
+}
+
+.catchupRange > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* 숫자 입력은 채팅 입력창과 같은 피부를 쓴다 (테두리 없이 안쪽 그림자) */
+.catchupRangeCustom input {
+  border: none;
+  background: var(--color-sand-bg);
+  box-shadow: inset 0 0 0 1.5px var(--color-fuzzy-edge);
+}
+
+.catchupRangeCustom input:focus {
+  border-color: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--color-accent);
 }
 

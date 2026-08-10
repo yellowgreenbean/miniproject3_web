@@ -800,6 +800,127 @@ h2,
   color: var(--color-main-text);
 }
 
+/* ---- categorized questions & topic shortcuts -------------------- */
+
+.chatBubbleStack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 85%;
+}
+
+.chatBubbleStack .chatBubble {
+  max-width: 100%;
+}
+
+/* Category colours match the todo card icons, so a topic reads the same
+   wherever it shows up. */
+[data-category="목표설정"] {
+  --topic-color: #4c7dff;
+}
+[data-category="컨디션"] {
+  --topic-color: #ff6f91;
+}
+[data-category="시간관리"] {
+  --topic-color: #3fc1d6;
+}
+[data-category="복습전략"] {
+  --topic-color: #9b7ede;
+}
+[data-category="슬럼프"] {
+  --topic-color: #ff9f43;
+}
+
+.coachChoices {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 4px;
+}
+
+.coachChoiceCategory {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--topic-color);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.coachChoiceChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.coachChoiceChip {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--topic-color);
+  background: var(--background);
+  color: var(--color-main-text);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.coachChoiceChip:hover,
+.coachChoiceChip:active {
+  background: var(--topic-color);
+  color: #fff;
+}
+
+.coachTopicRow {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.coachTopicRow::-webkit-scrollbar {
+  display: none;
+}
+
+.coachTopicButton {
+  flex: 0 0 auto;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1.5px solid var(--topic-color);
+  background: var(--background);
+  color: var(--topic-color);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.coachTopicButton:hover,
+.coachTopicButton:active {
+  background: var(--topic-color);
+  color: #fff;
+}
+
+.coachTopicButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.coachTopicButton:disabled:hover {
+  background: var(--background);
+  color: var(--topic-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coachChoiceChip,
+  .coachTopicButton {
+    transition: none;
+  }
+}
+
 .planWarning {
   font-size: 13px;
   font-weight: 600;

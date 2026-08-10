@@ -115,5 +115,9 @@ export async function POST(request) {
     { user_id: user.id, role: "assistant", content: result.reply },
   ]);
 
-  return Response.json({ reply: result.reply, planItems: result.planItems });
+  return Response.json({
+    reply: result.reply,
+    planItems: result.planItems,
+    choices: result.choices,
+  });
 }

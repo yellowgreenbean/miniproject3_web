@@ -15,6 +15,9 @@
   --color-card-bg-3: #fde2e2;
   --color-card-bg-4: #e1f0f7;
 
+  --color-card-outline: #4a7038;
+  --color-card-outline-soft: #b7de8b;
+
   --color-sky-band: #e2f1f8;
   --color-sand-bg: #fffdf6;
   --color-sand-bg-strong: #fffbef;
@@ -41,6 +44,9 @@
     --color-card-bg-2: #29273a;
     --color-card-bg-3: #3a2626;
     --color-card-bg-4: #1f303a;
+
+    --color-card-outline: #9fd188;
+    --color-card-outline-soft: #4c7a3c;
 
     --color-sky-band: #1c3540;
     --color-sand-bg: #2b2718;
@@ -546,8 +552,8 @@ a {
   padding: 16px;
   border-radius: 20px;
   background: var(--background);
-  border: 2.5px solid var(--color-main-text);
-  box-shadow: 6px 6px 0 var(--card-accent);
+  border: 2.5px solid var(--color-card-outline);
+  box-shadow: 6px 6px 0 var(--color-card-outline-soft);
   cursor: grab;
 }
 
@@ -595,9 +601,9 @@ a {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  border: 2px solid var(--color-main-text);
+  border: 2px solid var(--color-card-outline);
   background: var(--background);
-  color: var(--color-main-text);
+  color: var(--color-card-outline);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -605,8 +611,8 @@ a {
 }
 
 .todoCardDone .checkmarkPopup {
-  background: var(--card-accent);
-  border-color: var(--card-accent);
+  background: var(--color-card-outline);
+  border-color: var(--color-card-outline);
   color: #fff;
 }
 

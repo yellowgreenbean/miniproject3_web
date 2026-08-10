@@ -604,6 +604,20 @@ h2,
   border: 2.5px solid var(--color-card-outline);
   box-shadow: 6px 6px 0 var(--color-card-outline-soft);
   cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* :active carries the effect to touch screens, where there is no hover. */
+.todoCard:not(.todoCardDone):hover,
+.todoCard:not(.todoCardDone):active {
+  transform: translate(-2px, -3px);
+  box-shadow: 9px 10px 0 var(--color-card-outline-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .todoCard {
+    transition: none;
+  }
 }
 
 .todoCard[draggable="false"] {
@@ -678,6 +692,14 @@ h2,
 .todoCardDragging {
   opacity: 0.4;
   border-style: dashed;
+}
+
+/* The card being dragged sits still, so the drag ghost is not offset. */
+.todoCard.todoCardDragging,
+.todoCard.todoCardDragging:hover,
+.todoCard.todoCardDragging:active {
+  transform: none;
+  box-shadow: 6px 6px 0 var(--color-card-outline-soft);
 }
 
 .dragHandle {

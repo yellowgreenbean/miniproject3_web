@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { login } from "@/app/actions";
+import { login, loginWithGoogle } from "@/app/actions";
+import GoogleButton from "@/app/components/GoogleButton";
 
 export default async function LoginPage({ searchParams }) {
   const params = await searchParams;
@@ -30,6 +31,9 @@ export default async function LoginPage({ searchParams }) {
           </label>
           <button type="submit">로그인</button>
         </form>
+
+        {/* 구글 설정 전에는 버튼이 눌러도 실패하므로 아예 감춘다. */}
+        {process.env.GOOGLE_CLIENT_ID && <GoogleButton action={loginWithGoogle} />}
 
         <p className="authFooter">
           아직 계정이 없으신가요? <Link href="/signup">회원가입</Link>

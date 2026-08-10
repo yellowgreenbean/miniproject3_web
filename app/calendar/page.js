@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { addTodos, addFriend, removeFriend, saveDiary } from "@/app/actions";
+import { addTodos, addFriend, removeFriend, saveDiary, unlinkGoogle } from "@/app/actions";
+import { getGoogleEvents } from "@/lib/googleCalendar";
 import {
   todayISO,
   getMonthMatrix,
@@ -51,7 +52,9 @@ export default async function CalendarPage({ searchParams }) {
   const gridStart = days[0].iso;
   const gridEnd = days[days.length - 1].iso;
 
-  const [{ data: monthTodos }, { data: dayTodos, error }, { data: diaryRow }] = await Promise.all([
+  // 구글 일정은 내 달력에서만 불러온다. 친구 달력에는 친구의 구글 토큰이 없고,
+  // 있더라도 남의 일정을 보여주면 안 된다.
+  const [{ data: monthTodos }, { data: dayTodos, error }, { data: diaryRow }, googleEvents] = await Promise.all([
     supabase
       .from("todos")
       .select("date")
@@ -71,10 +74,18 @@ export default async function CalendarPage({ searchParams }) {
       .eq("user_id", viewingUserId)
       .eq("date", selectedDate)
       .maybeSingle(),
+    isOwnCalendar
+      ? getGoogleEvents(supabase, user.id, gridStart, gridEnd)
+      : Promise.resolve(null),
   ]);
 
   const datesWithTodos = new Set((monthTodos ?? []).map((t) => t.date));
   const list = dayTodos ?? [];
+
+  // null 이면 연동 안 됨(또는 토큰 만료), 빈 배열이면 연동됐지만 이달 일정이 없음
+  const googleLinked = googleEvents !== null;
+  const datesWithGoogle = new Set((googleEvents ?? []).map((e) => e.date));
+  const dayGoogleEvents = (googleEvents ?? []).filter((e) => e.date === selectedDate);
 
   const prevMonth = addMonths(selectedDate, -1);
   const nextMonth = addMonths(selectedDate, 1);
@@ -165,7 +176,10 @@ export default async function CalendarPage({ searchParams }) {
                 className={className}
               >
                 <span className="monthDayNumber">{day.day}</span>
-                {datesWithTodos.has(day.iso) && <span className="monthDot" />}
+                <span className="monthDots">
+                  {datesWithTodos.has(day.iso) && <span className="monthDot" />}
+                  {datesWithGoogle.has(day.iso) && <span className="monthDot monthDotGoogle" />}
+                </span>
               </Link>
             );
           })}
@@ -173,6 +187,29 @@ export default async function CalendarPage({ searchParams }) {
       </nav>
 
       <main className="mainContent">
+        {isOwnCalendar && googleLinked && (
+          <section className="googleSection">
+            <div className="googleSectionHead">
+              <h2>구글 캘린더</h2>
+              <form action={unlinkGoogle}>
+                <button type="submit" className="ghostButton">연동 해제</button>
+              </form>
+            </div>
+            {dayGoogleEvents.length === 0 ? (
+              <p className="googleEmpty">이 날은 구글 일정이 없습니다.</p>
+            ) : (
+              <ul className="googleEventList">
+                {dayGoogleEvents.map((event) => (
+                  <li key={event.id} className="googleEvent">
+                    <span className="googleEventTime">{event.allDay ? "종일" : event.time}</span>
+                    <span className="googleEventTitle">{event.title}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
+
         {isOwnCalendar && (
           <form action={addTodos} className="todoForm">
             <input type="hidden" name="date" value={selectedDate} />

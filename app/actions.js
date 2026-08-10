@@ -2,8 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { todayISO } from "@/lib/date";
+import { GOOGLE_CALENDAR_SCOPE } from "@/lib/googleCalendar";
 
 export async function login(formData) {
   const supabase = await createClient();
@@ -37,6 +39,39 @@ export async function signup(formData) {
   }
 
   redirect(`/signup?message=${encodeURIComponent("가입 확인 이메일을 보냈어요. 메일함을 확인해주세요.")}`);
+}
+
+export async function loginWithGoogle() {
+  const supabase = await createClient();
+  const headerList = await headers();
+  const host = headerList.get("host");
+  const proto = headerList.get("x-forwarded-proto") ?? "http";
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${proto}://${host}/auth/callback`,
+      scopes: GOOGLE_CALENDAR_SCOPE,
+      // offline + consent 를 함께 줘야 refresh token 이 내려온다.
+      // 이게 없으면 로그인 후 1시간만 캘린더가 보인다.
+      queryParams: { access_type: "offline", prompt: "consent" },
+    },
+  });
+
+  if (error || !data?.url) {
+    redirect(`/login?error=${encodeURIComponent("구글 로그인을 시작하지 못했습니다.")}`);
+  }
+
+  redirect(data.url);
+}
+
+export async function unlinkGoogle() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  await supabase.from("google_tokens").delete().eq("user_id", user.id);
+  revalidatePath("/calendar");
 }
 
 export async function logout() {

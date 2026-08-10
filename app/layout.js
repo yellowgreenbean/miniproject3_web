@@ -1,10 +1,10 @@
-import { Gothic_A1, Do_Hyeon } from "next/font/google";
+import { Noto_Sans_KR, Do_Hyeon } from "next/font/google";
 import "./globals.css";
 
-const bodyFont = Gothic_A1({
+// Variable font — covers 100-900, so no weight list is needed.
+const bodyFont = Noto_Sans_KR({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 

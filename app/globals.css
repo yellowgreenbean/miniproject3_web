@@ -286,7 +286,7 @@ h2,
 }
 
 .mainHeader h1 {
-  font-size: 22px;
+  font-size: 25px;
 }
 
 .friendPanel {
@@ -543,7 +543,7 @@ h2,
 }
 
 .diarySection h2 {
-  font-size: 15px;
+  font-size: 17px;
 }
 
 .diaryForm {
@@ -880,7 +880,7 @@ h2,
 
 .bandTitle {
   justify-self: center;
-  font-size: 21px;
+  font-size: 24px;
   color: var(--color-accent-deep);
   text-align: center;
 }
@@ -1080,7 +1080,6 @@ h2,
 
 .diarySection h2 {
   color: var(--color-accent-deep);
-  font-weight: 800;
 }
 
 /* ---- study chat screen (screen 3) ------------------------------ */

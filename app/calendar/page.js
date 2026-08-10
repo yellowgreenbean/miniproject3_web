@@ -201,8 +201,25 @@ export default async function CalendarPage({ searchParams }) {
               <ul className="googleEventList">
                 {dayGoogleEvents.map((event) => (
                   <li key={event.id} className="googleEvent">
-                    <span className="googleEventTime">{event.allDay ? "종일" : event.time}</span>
-                    <span className="googleEventTitle">{event.title}</span>
+                    <span className="googleEventBadge" aria-hidden="true">
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="22"
+                        height="22"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="4" y="5" width="16" height="15" rx="3" />
+                        <path d="M4 10h16M8 3v4M16 3v4" />
+                      </svg>
+                    </span>
+                    <span className="googleEventBody">
+                      <span className="googleEventTitle">{event.title}</span>
+                      <span className="googleEventTime">{event.allDay ? "종일" : event.time}</span>
+                    </span>
                   </li>
                 ))}
               </ul>

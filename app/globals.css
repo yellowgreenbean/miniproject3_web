@@ -18,6 +18,11 @@
   --color-card-outline: #4a7038;
   --color-card-outline-soft: #b7de8b;
 
+  /* 구글 일정은 할 일 카드와 같은 형태를 쓰되 파란 정체성만 유지한다.
+     -soft 는 카드 그림자용으로, 초록 카드의 --color-card-outline-soft 와 같은 자리. */
+  --color-google: #4285f4;
+  --color-google-soft: #b3ccfb;
+
   --color-sky-band: #e2f1f8;
   --color-sand-bg: #fffdf6;
   --color-sand-bg-strong: #fffbef;
@@ -47,6 +52,9 @@
 
     --color-card-outline: #9fd188;
     --color-card-outline-soft: #4c7a3c;
+
+    --color-google: #7aa9f7;
+    --color-google-soft: #2f4a7a;
 
     --color-sky-band: #1c3540;
     --color-sand-bg: #2b2718;
@@ -479,7 +487,7 @@ h2,
 
 /* 구글 일정은 할 일 점과 구분되도록 파란 점으로 표시한다. */
 .monthDotGoogle {
-  background: #4285f4;
+  background: var(--color-google);
 }
 
 .monthDaySelected .monthDot {
@@ -1208,7 +1216,7 @@ h2,
 
 .googleSectionHead h2 {
   font-size: 15px;
-  color: #4285f4;
+  color: var(--color-google);
 }
 
 .googleEmpty {
@@ -1220,26 +1228,56 @@ h2,
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  /* 카드마다 6px 그림자가 아래로 떨어지므로 간격을 그만큼 벌린다 */
+  gap: 14px;
 }
 
+/* .todoCard 와 같은 카드 문법: 2.5px 윤곽선, 20px 라운드, 흘려 쓴 듯한
+   6px 오프셋 그림자. 색만 초록 대신 구글 파랑을 쓴다. 할 일 카드와 달리
+   눌러서 하는 동작이 없어서 hover 로 들리는 효과는 넣지 않았다. */
 .googleEvent {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
-  font-size: 13px;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: var(--background);
+  border: 2.5px solid var(--color-google);
+  box-shadow: 6px 6px 0 var(--color-google-soft);
+}
+
+.googleEventBadge {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--color-google);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.googleEventBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* 할 일 카드의 .todoText(16px/800)보다 한 단계 크고 굵게 */
+.googleEventTitle {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--color-main-text);
+  word-break: break-word;
 }
 
 .googleEventTime {
-  flex: 0 0 auto;
-  min-width: 38px;
-  color: #4285f4;
+  font-size: 13px;
   font-weight: 700;
-}
-
-.googleEventTitle {
-  color: var(--color-main-text);
-  word-break: break-word;
+  color: var(--color-google);
 }
 
 .studyChatInputRow {

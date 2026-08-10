@@ -41,7 +41,9 @@ export async function signup(formData) {
   redirect(`/signup?message=${encodeURIComponent("가입 확인 이메일을 보냈어요. 메일함을 확인해주세요.")}`);
 }
 
-export async function loginWithGoogle() {
+// 로그인 화면의 "구글로 계속하기"와 달력 화면의 "연동하기"는 같은 동의 절차를
+// 쓴다. 실패했을 때 돌아갈 화면만 달라서 그 부분만 인자로 받는다.
+async function startGoogleOAuth(errorUrl) {
   const supabase = await createClient();
   const headerList = await headers();
   const host = headerList.get("host");
@@ -54,15 +56,31 @@ export async function loginWithGoogle() {
       scopes: GOOGLE_CALENDAR_SCOPE,
       // offline + consent 를 함께 줘야 refresh token 이 내려온다.
       // 이게 없으면 로그인 후 1시간만 캘린더가 보인다.
+      // 재연동에서도 필수다. 이미 승인한 앱이면 구글이 동의 화면을 건너뛰면서
+      // refresh token 을 다시 주지 않기 때문이다.
       queryParams: { access_type: "offline", prompt: "consent" },
     },
   });
 
   if (error || !data?.url) {
-    redirect(`/login?error=${encodeURIComponent("구글 로그인을 시작하지 못했습니다.")}`);
+    redirect(errorUrl);
   }
 
   redirect(data.url);
+}
+
+export async function loginWithGoogle() {
+  await startGoogleOAuth(
+    `/login?error=${encodeURIComponent("구글 로그인을 시작하지 못했습니다.")}`
+  );
+}
+
+// 달력 화면에서 구글 캘린더만 다시 붙일 때. 이미 로그인한 상태에서 눌러도
+// 같은 구글 계정을 고르면 세션이 그대로 이어지고 토큰만 새로 받는다.
+export async function linkGoogle() {
+  await startGoogleOAuth(
+    `/calendar?googleError=${encodeURIComponent("구글 연동을 시작하지 못했습니다.")}`
+  );
 }
 
 export async function unlinkGoogle() {

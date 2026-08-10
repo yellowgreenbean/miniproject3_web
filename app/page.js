@@ -89,6 +89,14 @@ export default async function HomePage({ searchParams }) {
       </nav>
 
       <main className="mainContent bandContent">
+        {error && (
+          <p className="authError">할 일을 불러오지 못했습니다: {error.message}</p>
+        )}
+
+        <div className="emptyStateWrap">
+          <TodoGrid key={selectedDate} initialTodos={list} />
+        </div>
+
         <form action={addTodos} className="todoForm">
           <input type="hidden" name="date" value={selectedDate} />
           <label>
@@ -103,14 +111,6 @@ export default async function HomePage({ searchParams }) {
           </label>
           <button type="submit" className="pillButton">추가하기</button>
         </form>
-
-        {error && (
-          <p className="authError">할 일을 불러오지 못했습니다: {error.message}</p>
-        )}
-
-        <div className="emptyStateWrap">
-          <TodoGrid key={selectedDate} initialTodos={list} />
-        </div>
 
         <GrassHill />
       </main>

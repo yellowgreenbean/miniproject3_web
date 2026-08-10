@@ -1,9 +1,18 @@
-export default function GoogleButton({ action, label = "Google 계정으로 계속하기" }) {
+// 로그인/회원가입 화면에서는 이메일 폼 아래에 "또는" 구분선과 함께 놓이지만,
+// 달력 화면의 재연동 버튼은 그 자리에 있는 게 아니라 divider/hint 를 끌 수 있게 했다.
+export default function GoogleButton({
+  action,
+  label = "Google 계정으로 계속하기",
+  divider = true,
+  hint = "구글 계정으로 로그인하면 달력에서 구글 캘린더 일정을 볼 수 있습니다.",
+}) {
   return (
     <>
-      <div className="authDivider">
-        <span>또는</span>
-      </div>
+      {divider && (
+        <div className="authDivider">
+          <span>또는</span>
+        </div>
+      )}
       <form action={action}>
         <button type="submit" className="googleButton">
           <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
@@ -27,7 +36,7 @@ export default function GoogleButton({ action, label = "Google 계정으로 계�
           {label}
         </button>
       </form>
-      <p className="authHint">구글 계정으로 로그인하면 달력에서 구글 캘린더 일정을 볼 수 있습니다.</p>
+      {hint && <p className="authHint">{hint}</p>}
     </>
   );
 }

@@ -47,7 +47,7 @@ export default function TodoGrid({ initialTodos, readOnly = false }) {
   }
 
   if (items.length === 0) {
-    return <p className="todoEmpty">아직 할 일이 없습니다.{!readOnly && " 위에서 추가해보세요."}</p>;
+    return <p className="todoEmpty">아직 할 일이 없습니다.{!readOnly && " 아래에서 추가해보세요."}</p>;
   }
 
   return (

@@ -1222,6 +1222,19 @@ h2,
 .googleEmpty {
   font-size: 13px;
   color: var(--color-muted-text);
+  line-height: 1.5;
+}
+
+/* 연동 전/만료 상태에서 안내 문구와 연동 버튼을 묶는 자리 */
+.googleLinkPrompt {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.googleSection .authError {
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .googleEventList {
@@ -1541,8 +1554,11 @@ h2,
   }
 }
 
+/* 할 일 카드 아래에 추가 폼이 오므로 이 영역이 남은 높이를 다 먹으면 안 된다.
+   카드가 적을 때 카드와 폼 사이가 화면만큼 벌어지기 때문이다.
+   바닥에 붙는 것은 .grassHill 의 margin-top:auto 가 알아서 한다. */
 .emptyStateWrap {
-  flex: 1;
+  flex: 0 0 auto;
 }
 
 .emptyStateWrap .todoEmpty,

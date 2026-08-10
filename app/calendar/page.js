@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { addTodos, addFriend, removeFriend, saveDiary, unlinkGoogle } from "@/app/actions";
-import { getGoogleEvents } from "@/lib/googleCalendar";
+import { addTodos, addFriend, removeFriend, saveDiary, unlinkGoogle, linkGoogle } from "@/app/actions";
+import { getGoogleEvents, isGoogleLinked } from "@/lib/googleCalendar";
+import GoogleButton from "@/app/components/GoogleButton";
 import {
   todayISO,
   getMonthMatrix,
@@ -25,6 +26,7 @@ export default async function CalendarPage({ searchParams }) {
   const today = todayISO();
   const selectedDate = params?.date || today;
   const friendError = params?.friendError;
+  const googleError = params?.googleError;
 
   const { data: friendRows } = await supabase
     .from("friends")
@@ -54,7 +56,13 @@ export default async function CalendarPage({ searchParams }) {
 
   // 구글 일정은 내 달력에서만 불러온다. 친구 달력에는 친구의 구글 토큰이 없고,
   // 있더라도 남의 일정을 보여주면 안 된다.
-  const [{ data: monthTodos }, { data: dayTodos, error }, { data: diaryRow }, googleEvents] = await Promise.all([
+  const [
+    { data: monthTodos },
+    { data: dayTodos, error },
+    { data: diaryRow },
+    googleEvents,
+    googleTokenSaved,
+  ] = await Promise.all([
     supabase
       .from("todos")
       .select("date")
@@ -77,13 +85,18 @@ export default async function CalendarPage({ searchParams }) {
     isOwnCalendar
       ? getGoogleEvents(supabase, user.id, gridStart, gridEnd)
       : Promise.resolve(null),
+    // 토큰 행이 있는지만 따로 본다. 이게 있어야 "아직 연동 안 함"과
+    // "연동은 했는데 토큰이 만료됨"을 구분해 다른 안내를 띄울 수 있다.
+    isOwnCalendar ? isGoogleLinked(supabase, user.id) : Promise.resolve(false),
   ]);
 
   const datesWithTodos = new Set((monthTodos ?? []).map((t) => t.date));
   const list = dayTodos ?? [];
 
-  // null 이면 연동 안 됨(또는 토큰 만료), 빈 배열이면 연동됐지만 이달 일정이 없음
+  // null 이면 조회 실패, 빈 배열이면 연동됐지만 이달 일정이 없음
   const googleLinked = googleEvents !== null;
+  // 토큰은 남아 있는데 조회가 실패했다면 만료됐거나 구글이 응답하지 않은 것이다.
+  const googleStale = googleTokenSaved && !googleLinked;
   const datesWithGoogle = new Set((googleEvents ?? []).map((e) => e.date));
   const dayGoogleEvents = (googleEvents ?? []).filter((e) => e.date === selectedDate);
 
@@ -187,15 +200,37 @@ export default async function CalendarPage({ searchParams }) {
       </nav>
 
       <main className="mainContent">
-        {isOwnCalendar && googleLinked && (
+        {/* 로그인/회원가입 화면과 같은 기준. 구글 설정 전에는 연동 버튼이 눌러도
+            실패하므로 구글 관련 UI 를 통째로 감춘다. */}
+        {isOwnCalendar && (process.env.GOOGLE_CLIENT_ID || googleTokenSaved) && (
           <section className="googleSection">
             <div className="googleSectionHead">
               <h2>구글 캘린더</h2>
-              <form action={unlinkGoogle}>
-                <button type="submit" className="ghostButton">연동 해제</button>
-              </form>
+              {/* 토큰이 남아 있을 때만 해제할 것이 있다 */}
+              {googleTokenSaved && (
+                <form action={unlinkGoogle}>
+                  <button type="submit" className="ghostButton">연동 해제</button>
+                </form>
+              )}
             </div>
-            {dayGoogleEvents.length === 0 ? (
+
+            {googleError && <p className="authError">{googleError}</p>}
+
+            {!googleLinked ? (
+              <div className="googleLinkPrompt">
+                <p className="googleEmpty">
+                  {googleStale
+                    ? "구글 일정을 불러오지 못했습니다. 연동이 만료되었을 수 있어요. 다시 연동해주세요."
+                    : "구글 캘린더를 연동하면 이 달력에서 구글 일정도 함께 볼 수 있습니다."}
+                </p>
+                <GoogleButton
+                  action={linkGoogle}
+                  label={googleStale ? "구글 캘린더 다시 연동하기" : "구글 캘린더 연동하기"}
+                  divider={false}
+                  hint={null}
+                />
+              </div>
+            ) : dayGoogleEvents.length === 0 ? (
               <p className="googleEmpty">이 날은 구글 일정이 없습니다.</p>
             ) : (
               <ul className="googleEventList">
@@ -227,6 +262,14 @@ export default async function CalendarPage({ searchParams }) {
           </section>
         )}
 
+        {error && (
+          <p className="authError">할 일을 불러오지 못했습니다: {error.message}</p>
+        )}
+
+        <div className="emptyStateWrap">
+          <TodoGrid key={`${viewingUserId}-${selectedDate}`} initialTodos={list} readOnly={!isOwnCalendar} />
+        </div>
+
         {isOwnCalendar && (
           <form action={addTodos} className="todoForm">
             <input type="hidden" name="date" value={selectedDate} />
@@ -243,14 +286,6 @@ export default async function CalendarPage({ searchParams }) {
             <button type="submit" className="pillButton">추가하기</button>
           </form>
         )}
-
-        {error && (
-          <p className="authError">할 일을 불러오지 못했습니다: {error.message}</p>
-        )}
-
-        <div className="emptyStateWrap">
-          <TodoGrid key={`${viewingUserId}-${selectedDate}`} initialTodos={list} readOnly={!isOwnCalendar} />
-        </div>
 
         {isOwnCalendar && (
           <section className="diarySection">

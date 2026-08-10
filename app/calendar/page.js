@@ -274,7 +274,9 @@ export default async function CalendarPage({ searchParams }) {
           <form action={addTodos} className="todoForm">
             <input type="hidden" name="date" value={selectedDate} />
             <label>
-              {formatDisplayDate(selectedDate)} 할 일 추가 (쉼표 또는 줄바꿈으로 구분)
+              <span className="todoFormTitle">
+                {formatDisplayDate(selectedDate)} 할 일 추가 (쉼표 또는 줄바꿈으로 구분)
+              </span>
               <div className="fuzzyTextareaWrap">
                 <textarea
                   name="content"

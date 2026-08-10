@@ -515,6 +515,17 @@ h2,
   font-size: 14px;
 }
 
+/* 일기 제목(.diarySection h2)과 같은 서체·크기·굵기·색으로 맞춘다.
+   label 이 아니라 글자만 감싼 span 에 거는 이유는, .todoForm textarea 가
+   font-family: inherit 이라 label 에 걸면 입력 본문까지 제목 서체가 되기 때문이다. */
+.todoFormTitle {
+  font-family: var(--font-display), var(--font-body), sans-serif;
+  font-weight: 400;
+  font-size: 17px;
+  letter-spacing: 0.01em;
+  color: var(--color-accent-deep);
+}
+
 .todoForm textarea {
   padding: 8px 10px;
   border: 1px solid #ccc;

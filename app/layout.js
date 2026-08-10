@@ -1,4 +1,4 @@
-import { Gothic_A1, Black_Han_Sans } from "next/font/google";
+import { Gothic_A1, Do_Hyeon } from "next/font/google";
 import "./globals.css";
 
 const bodyFont = Gothic_A1({
@@ -8,7 +8,7 @@ const bodyFont = Gothic_A1({
   display: "swap",
 });
 
-const displayFont = Black_Han_Sans({
+const displayFont = Do_Hyeon({
   variable: "--font-display",
   subsets: ["latin"],
   weight: "400",
